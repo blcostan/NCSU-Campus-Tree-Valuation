@@ -12,9 +12,11 @@
         #results { position: absolute; top: 100%; left: 0; right: 0; background: #18181b; border: 2px solid #CC0000; z-index: 9999; max-height: 200px; overflow-y: auto; display: none; border-radius: 0 0 12px 12px; }
         .search-item { padding: 14px; border-bottom: 1px solid #27272a; cursor: pointer; font-style: italic; font-size: 14px; }
         input[type=range] { @apply w-full accent-[#CC0000] h-3 bg-zinc-800 rounded-lg appearance-none cursor-pointer mt-4; }
-        .matrix-row { @apply border-b border-zinc-800 py-3 last:border-0; }
-        .matrix-pct { @apply text-[#CC0000] font-black text-xs w-16 inline-block; }
-        .matrix-desc { @apply text-[11px] text-zinc-400 inline-block align-top; width: calc(100% - 70px); }
+        .matrix-row { @apply border-b border-zinc-800 py-3 last:border-0 flex; }
+        .matrix-pct { @apply text-[#CC0000] font-black text-xs w-20 flex-shrink-0; }
+        .matrix-desc { @apply text-[11px] text-zinc-400 leading-tight; }
+        .guide-card { @apply bg-zinc-900/50 p-6 border-t-2 border-zinc-700 rounded-xl mb-6; }
+        .guide-title { @apply text-white font-bold text-sm mb-4 flex items-center; }
         @media print { .no-print { display: none !important; } }
     </style>
 </head>
@@ -23,18 +25,18 @@
     <div class="sticky-val no-print">
         <div class="max-w-4xl mx-auto flex justify-between items-center">
             <div>
-                <p class="text-[9px] font-black text-[#CC0000] uppercase tracking-tighter">Current Asset Value</p>
+                <p class="text-[9px] font-black text-[#CC0000] uppercase tracking-tighter">Campus Asset Value</p>
                 <h1 id="valDisplay" class="text-3xl md:text-5xl font-black leading-none tracking-tight">$0.00</h1>
             </div>
-            <button onclick="window.print()" class="bg-white text-black text-[10px] font-black px-4 py-2 rounded uppercase">Export</button>
+            <button onclick="window.print()" class="bg-white text-black text-[10px] font-black px-4 py-2 rounded uppercase">Export Report</button>
         </div>
     </div>
 
     <main class="max-w-4xl mx-auto p-4 grid grid-cols-1 lg:grid-cols-2 gap-8 no-print">
         
         <section class="space-y-6">
-            <div class="bg-zinc-900 p-6 rounded-2xl border border-zinc-800">
-                <h2 class="text-[#CC0000] font-black text-[10px] uppercase tracking-widest mb-4 italic">1. Identity & Size</h2>
+            <div class="bg-zinc-900 p-6 rounded-2xl border border-zinc-800 shadow-xl">
+                <h2 class="text-[#CC0000] font-black text-[10px] uppercase tracking-widest mb-4 italic">Step 1: Identity & Size</h2>
                 <div class="relative">
                     <input type="text" id="sSearch" autocomplete="off" placeholder="Search Latin Name..." 
                            class="w-full bg-black border-2 border-zinc-700 p-4 rounded-xl italic focus:border-[#CC0000] outline-none text-white text-lg">
@@ -54,7 +56,7 @@
             </div>
 
             <div class="bg-zinc-900 p-6 rounded-2xl border border-zinc-800 space-y-8">
-                <h2 class="text-[#CC0000] font-black text-[10px] uppercase tracking-widest italic">2. Depreciation Factors</h2>
+                <h2 class="text-[#CC0000] font-black text-[10px] uppercase tracking-widest italic">Step 2: Depreciation</h2>
                 <div>
                     <div class="flex justify-between text-[11px] font-bold uppercase">Condition Rating <span id="cLab" class="text-[#CC0000]">85%</span></div>
                     <input type="range" id="cond" min="1" max="100" value="85" oninput="calc()">
@@ -70,13 +72,25 @@
             </div>
         </section>
 
-        <section class="space-y-4">
-            <h2 class="text-zinc-600 font-black text-[10px] uppercase tracking-widest mb-2 ml-1 tracking-[.2em]">Depreciation Matrix</h2>
+        <section class="space-y-2">
+            <h2 class="text-zinc-600 font-black text-[10px] uppercase tracking-widest mb-4 ml-1">Field Appraisal Guide</h2>
             
-            <div class="bg-zinc-900/50 p-6 border-t-2 border-zinc-700 rounded-xl">
-                <h4 class="text-white font-bold text-sm mb-4 flex items-center"><span class="w-2 h-2 bg-[#CC0000] rounded-full mr-2"></span> Biological Condition</h4>
+            <div class="guide-card">
+                <h4 class="guide-title"><span class="w-2 h-2 bg-[#CC0000] rounded-full mr-2"></span> Biological Condition</h4>
                 <div class="matrix-row"><span class="matrix-pct">90-100%</span><span class="matrix-desc">Peak vigor; perfect structure; zero dieback; strong apical dominance.</span></div>
-                <div class="matrix-row"><span class="matrix-pct">70-90%</span><span class="matrix-desc">Good vigor; minor structural defects; <10% deadwood in outer crown.</span></div>
-                <div class="matrix-row"><span class="matrix-pct">50-70%</span><span class="matrix-desc">Fair vigor; codominant stems with inclusions; 10-30% crown dieback.</span></div>
-                <div class="matrix-row"><span class="matrix-pct">< 50%</span><span class="matrix-desc">Declining; major decay/cavities; hazard potential; >30% dieback.</span></div>
+                <div class="matrix-row"><span class="matrix-pct">70-90%</span><span class="matrix-desc">Good vigor; minor structural defects; <10% deadwood in crown.</span></div>
+                <div class="matrix-row"><span class="matrix-pct">50-70%</span><span class="matrix-desc">Fair vigor; codominant stems with inclusions; 10-30% dieback.</span></div>
+                <div class="matrix-row"><span class="matrix-pct">< 50%</span><span class="matrix-desc">Declining; major decay; hazard potential; >30% dieback.</span></div>
             </div>
+
+            <div class="guide-card">
+                <h4 class="guide-title"><span class="w-2 h-2 bg-zinc-500 rounded-full mr-2"></span> Functional Suitability</h4>
+                <div class="matrix-row"><span class="matrix-pct">90-100%</span><span class="matrix-desc">Ideal species for site; no hardscape heave; no utility conflicts.</span></div>
+                <div class="matrix-row"><span class="matrix-pct">70-90%</span><span class="matrix-desc">Minor conflict with site use; requires routine utility pruning.</span></div>
+                <div class="matrix-row"><span class="matrix-pct">40-70%</span><span class="matrix-desc">Heaving hardscape > 1/4" (ADA conflict); steam line buffer issue.</span></div>
+                <div class="matrix-row"><span class="matrix-pct">< 40%</span><span class="matrix-desc">Severe obstruction to traffic/visibility or safety hazard.</span></div>
+            </div>
+
+            <div class="guide-card">
+                <h4 class="guide-title"><span class="w-2 h-2 bg-white rounded-full mr-2"></span> Master Plan (External)</h4>
+                <div class="matrix-row">
