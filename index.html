@@ -15,102 +15,103 @@
         .matrix-row { @apply border-b border-zinc-800 py-4 last:border-0 flex items-start gap-4; }
         .matrix-pct { @apply text-[#CC0000] font-black text-xs w-20 flex-shrink-0 pt-0.5; }
         .matrix-desc { @apply text-[12px] text-zinc-400 leading-snug flex-grow; }
+        
+        /* THE PRINT FIX */
         @media print {
-            .no-print { display: none !important; }
-            body { background: white !important; color: black !important; }
-            .print-only { display: block !important; padding: 40px; }
-            .report-box { border: 2px solid #CC0000; padding: 20px; margin-top: 20px; }
+            #app-interface { display: none !important; }
+            #print-report { display: block !important; background: white !important; color: black !important; padding: 40px !important; width: 100% !important; }
+            .report-box { border: 3px solid #CC0000; padding: 25px; margin-top: 20px; }
         }
-        .print-only { display: none; color: black; }
     </style>
 </head>
 <body class="min-h-screen">
 
-    <div class="print-only">
-        <h1 style="font-size: 28px; font-weight: 900; color: #CC0000; border-bottom: 4px solid #CC0000;">NCSU TREE APPRAISAL REPORT</h1>
-        <p style="margin-top: 10px; font-weight: bold;">Date: <span id="pDate"></span></p>
+    <div id="app-interface">
+        <div class="sticky-val">
+            <div class="max-w-2xl mx-auto flex justify-between items-center">
+                <div>
+                    <p class="text-[9px] font-black text-[#CC0000] uppercase tracking-tighter">Campus Asset Value</p>
+                    <h1 id="valDisplay" class="text-3xl md:text-5xl font-black leading-none tracking-tight">$0.00</h1>
+                </div>
+                <button onclick="window.print()" class="bg-white text-black text-[10px] font-black px-4 py-2 rounded uppercase shadow-lg">Export Report</button>
+            </div>
+        </div>
+
+        <main class="max-w-2xl mx-auto p-4 space-y-8">
+            <div class="bg-zinc-900 p-6 rounded-2xl border border-zinc-800">
+                <h2 class="text-[#CC0000] font-black text-[10px] uppercase tracking-widest mb-4 italic">1. Identity & Size</h2>
+                <div class="relative">
+                    <input type="text" id="sSearch" autocomplete="off" placeholder="Search Latin Name..." 
+                           class="w-full bg-black border-2 border-zinc-700 p-4 rounded-xl italic focus:border-[#CC0000] outline-none text-white text-lg">
+                    <div id="results"></div>
+                </div>
+                <div class="grid grid-cols-2 gap-4 mt-6">
+                    <div class="bg-black p-4 rounded-xl border border-zinc-800 text-center">
+                        <span class="block text-[9px] text-zinc-500 font-bold uppercase mb-1">Species %</span>
+                        <input type="number" id="sRate" value="90" oninput="calc()" class="w-full bg-transparent text-2xl font-black text-[#CC0000] outline-none text-center">
+                    </div>
+                    <div class="bg-black p-4 rounded-xl border border-zinc-800 text-center">
+                        <span class="block text-[9px] text-zinc-500 font-bold uppercase mb-1">DBH (In)</span>
+                        <input type="number" id="dbh" value="24" oninput="calc()" class="w-full bg-transparent text-2xl font-black text-white outline-none text-center">
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-zinc-900 p-6 rounded-2xl border border-zinc-800 space-y-2">
+                <h2 class="text-[#CC0000] font-black text-[10px] uppercase tracking-widest italic">2. Field Notes</h2>
+                <textarea id="notesIn" oninput="calc()" placeholder="Enter Tree ID or Location..." class="w-full bg-black border border-zinc-800 p-3 rounded-xl text-sm text-zinc-300 h-20 outline-none focus:border-[#CC0000]"></textarea>
+            </div>
+
+            <div class="bg-zinc-900 p-6 rounded-2xl border border-zinc-800 space-y-6">
+                <h2 class="text-[#CC0000] font-black text-[10px] uppercase tracking-widest italic">3. Depreciation</h2>
+                <div>
+                    <div class="flex justify-between text-[11px] font-bold uppercase">Condition Rating <span id="cLab" class="text-[#CC0000]">85%</span></div>
+                    <input type="range" id="cond" min="1" max="100" value="85" oninput="calc()">
+                </div>
+                <div>
+                    <div class="flex justify-between text-[11px] font-bold uppercase">Functional Suitability <span id="fLab" class="text-[#CC0000]">100%</span></div>
+                    <input type="range" id="func" min="1" max="100" value="100" oninput="calc()">
+                </div>
+                <div>
+                    <div class="flex justify-between text-[11px] font-bold uppercase">Master Plan Alignment <span id="eLab" class="text-[#CC0000]">100%</span></div>
+                    <input type="range" id="ext" min="1" max="100" value="100" oninput="calc()">
+                </div>
+            </div>
+
+            <div class="space-y-6 pb-20">
+                <h2 class="text-zinc-600 font-black text-[10px] uppercase tracking-[.3em] text-center italic pt-4">Field Assessment Standards</h2>
+                <div class="bg-zinc-900/50 p-6 border-t-2 border-zinc-700 rounded-xl">
+                    <h4 class="text-white font-bold text-sm mb-4 flex items-center uppercase tracking-wider"><span class="w-2 h-2 bg-[#CC0000] rounded-full mr-2"></span> Biological Condition</h4>
+                    <div class="matrix-row"><span class="matrix-pct">90-100%</span><span class="matrix-desc">Peak vigor; perfect structure; zero dieback.</span></div>
+                    <div class="matrix-row"><span class="matrix-pct">50-70%</span><span class="matrix-desc">Fair vigor; 10-30% crown dieback.</span></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="print-report" style="display: none; color: black; font-family: sans-serif;">
+        <h1 style="font-size: 32px; font-weight: 900; color: #CC0000; border-bottom: 5px solid #CC0000; padding-bottom: 10px; margin: 0;">NCSU TREE APPRAISAL</h1>
+        <p style="margin-top: 10px;"><strong>Date:</strong> <span id="pDate"></span></p>
+        
         <div class="report-box">
-            <h2 id="pSpecies" style="font-size: 22px; font-style: italic; margin-bottom: 5px;">Species Not Selected</h2>
-            <p><strong>Trunk Diameter (DBH):</strong> <span id="pDBH">--</span> inches</p>
-            <p><strong>Base Replacement Cost (3.5"):</strong> $1,824.00</p>
-            <hr style="margin: 15px 0; border: 0; border-top: 1px solid #eee;">
-            <p><strong>Biological Condition:</strong> <span id="pCond">--</span></p>
+            <h2 id="pSpecies" style="font-size: 24px; font-style: italic; margin-bottom: 10px;">Species Not Selected</h2>
+            <p style="font-size: 18px;"><strong>Trunk Diameter (DBH):</strong> <span id="pDBH">--</span> inches</p>
+            <hr style="margin: 20px 0; border: 0; border-top: 2px solid #eee;">
+            <p><strong>Condition Rating:</strong> <span id="pCond">--</span></p>
             <p><strong>Functional Suitability:</strong> <span id="pFunc">--</span></p>
             <p><strong>Master Plan Alignment:</strong> <span id="pExt">--</span></p>
-            <h3 style="font-size: 32px; font-weight: 900; margin-top: 20px; color: #CC0000;">APPRAISED VALUE: <span id="pVal">$0.00</span></h3>
+            <div style="background: #CC0000; color: white; padding: 20px; margin-top: 30px; text-align: center;">
+                <p style="margin: 0; font-size: 14px; text-transform: uppercase; font-weight: bold;">Appraised Campus Value</p>
+                <h3 id="pVal" style="font-size: 48px; font-weight: 900; margin: 0;">$0.00</h3>
+            </div>
         </div>
-        <div style="margin-top: 30px;">
-            <p><strong>Field Notes / Location:</strong></p>
-            <div style="border: 1px solid #ccc; height: 150px; padding: 10px; margin-top: 5px;" id="pNotes"></div>
+        
+        <div style="margin-top: 40px;">
+            <p style="font-weight: bold; text-transform: uppercase; font-size: 12px; color: #666;">Field Notes & Location:</p>
+            <div id="pNotes" style="border: 1px solid #000; min-height: 100px; padding: 15px; margin-top: 10px; font-size: 16px;"></div>
         </div>
-        <p style="font-size: 10px; margin-top: 40px; color: #666;">Calculated using NCSU-Specific Unit Costs ($1,824/3.5" Caliper) & ISA 10th Ed. Trunk Formula Method.</p>
+        <p style="font-size: 10px; margin-top: 50px; color: #888; border-top: 1px solid #ddd; padding-top: 10px;">Based on ISA 10th Ed. Trunk Formula Method. Campus Replacement Unit Cost: $1,824 / 3.5" Caliper.</p>
     </div>
-
-    <div class="sticky-val no-print">
-        <div class="max-w-2xl mx-auto flex justify-between items-center">
-            <div>
-                <p class="text-[9px] font-black text-[#CC0000] uppercase tracking-tighter">Campus Asset Value</p>
-                <h1 id="valDisplay" class="text-3xl md:text-5xl font-black leading-none tracking-tight">$0.00</h1>
-            </div>
-            <button onclick="prepareAndPrint()" class="bg-white text-black text-[10px] font-black px-4 py-2 rounded uppercase shadow-lg">Export Report</button>
-        </div>
-    </div>
-
-    <main class="max-w-2xl mx-auto p-4 space-y-8 no-print">
-        <div class="bg-zinc-900 p-6 rounded-2xl border border-zinc-800 shadow-xl">
-            <h2 class="text-[#CC0000] font-black text-[10px] uppercase tracking-widest mb-4 italic">1. Identity & Size</h2>
-            <div class="relative">
-                <input type="text" id="sSearch" autocomplete="off" placeholder="Search Latin Name..." 
-                       class="w-full bg-black border-2 border-zinc-700 p-4 rounded-xl italic focus:border-[#CC0000] outline-none text-white text-lg">
-                <div id="results"></div>
-            </div>
-            <div class="grid grid-cols-2 gap-4 mt-6">
-                <div class="bg-black p-4 rounded-xl border border-zinc-800 text-center">
-                    <span class="block text-[9px] text-zinc-500 font-bold uppercase mb-1">Species %</span>
-                    <input type="number" id="sRate" value="90" oninput="calc()" class="w-full bg-transparent text-2xl font-black text-[#CC0000] outline-none text-center">
-                </div>
-                <div class="bg-black p-4 rounded-xl border border-zinc-800 text-center">
-                    <span class="block text-[9px] text-zinc-500 font-bold uppercase mb-1">DBH (In)</span>
-                    <input type="number" id="dbh" value="24" oninput="calc()" class="w-full bg-transparent text-2xl font-black text-white outline-none text-center">
-                </div>
-            </div>
-        </div>
-
-        <div class="bg-zinc-900 p-6 rounded-2xl border border-zinc-800 space-y-6">
-            <h2 class="text-[#CC0000] font-black text-[10px] uppercase tracking-widest italic">2. Field Notes</h2>
-            <textarea id="notesIn" placeholder="Enter Tree ID or Location..." class="w-full bg-black border border-zinc-800 p-3 rounded-xl text-sm text-zinc-300 h-20 outline-none focus:border-[#CC0000]"></textarea>
-        </div>
-
-        <div class="bg-zinc-900 p-6 rounded-2xl border border-zinc-800 space-y-6">
-            <h2 class="text-[#CC0000] font-black text-[10px] uppercase tracking-widest italic">3. Depreciation Factors</h2>
-            <div>
-                <div class="flex justify-between text-[11px] font-bold uppercase">Condition Rating <span id="cLab" class="text-[#CC0000]">85%</span></div>
-                <input type="range" id="cond" min="1" max="100" value="85" oninput="calc()">
-            </div>
-            <div>
-                <div class="flex justify-between text-[11px] font-bold uppercase">Functional Suitability <span id="fLab" class="text-[#CC0000]">100%</span></div>
-                <input type="range" id="func" min="1" max="100" value="100" oninput="calc()">
-            </div>
-            <div>
-                <div class="flex justify-between text-[11px] font-bold uppercase">Master Plan Alignment <span id="eLab" class="text-[#CC0000]">100%</span></div>
-                <input type="range" id="ext" min="1" max="100" value="100" oninput="calc()">
-            </div>
-        </div>
-
-        <div class="space-y-6">
-            <h2 class="text-zinc-600 font-black text-[10px] uppercase tracking-[.3em] text-center italic pt-4">Field Assessment Standards</h2>
-            <div class="bg-zinc-900/50 p-6 border-t-2 border-zinc-700 rounded-xl">
-                <h4 class="text-white font-bold text-sm mb-4 flex items-center uppercase tracking-wider"><span class="w-2 h-2 bg-[#CC0000] rounded-full mr-2"></span> Biological Condition</h4>
-                <div class="matrix-row"><span class="matrix-pct">90-100%</span><span class="matrix-desc">Peak vigor; perfect structure; zero dieback.</span></div>
-                <div class="matrix-row"><span class="matrix-pct">50-70%</span><span class="matrix-desc">Fair vigor; codominant stems; 10-30% dieback.</span></div>
-            </div>
-            <div class="bg-zinc-900/50 p-6 border-t-2 border-zinc-700 rounded-xl">
-                <h4 class="text-white font-bold text-sm mb-4 flex items-center uppercase tracking-wider"><span class="w-2 h-2 bg-zinc-500 rounded-full mr-2"></span> Functional Suitability</h4>
-                <div class="matrix-row"><span class="matrix-pct">90-100%</span><span class="matrix-desc">Zero hardscape heave; no utility conflicts.</span></div>
-                <div class="matrix-row"><span class="matrix-pct">< 40%</span><span class="matrix-desc">Severe obstruction or safety hazard.</span></div>
-            </div>
-        </div>
-    </main>
 
     <script>
         const speciesDB = [ {name:"Ulmus americana",rate:55},{name:"Ilex opaca",rate:70},{name:"Ostrya virginiana",rate:75},{name:"Cladrastis kentukea",rate:65},{name:"Malus spp.",rate:40},{name:"Thuja spp.",rate:50},{name:"Fraxinus pennsylvanica",rate:35},{name:"Taxodium distichum",rate:90},{name:"Fagus spp.",rate:80},{name:"Magnolia macrophylla",rate:75},{name:"Nyssa sylvatica",rate:75},{name:"Salix nigra",rate:40},{name:"Quercus marilandica",rate:70},{name:"Cedrus altantica 'Glauca'",rate:50},{name:"Pyrus calleryana",rate:20},{name:"Halesia carolina",rate:80},{name:"Prunus serotina",rate:75},{name:"Prunus spp.",rate:45},{name:"Quercus prinus",rate:80},{name:"Cunninghamia lanceolata",rate:65},{name:"Cedrus parvifolia",rate:80},{name:"Celtis occidentalis",rate:70},{name:"Cornus mas",rate:75},{name:"Malus spp.",rate:55},{name:"Lagerstroemia indica",rate:80},{name:"Magnolia acuminata",rate:60},{name:"Metasequoia glyptostroboides",rate:70},{name:"Cedrus deodara",rate:40},{name:"Populus deltoides",rate:40},{name:"Juniperus virginiana",rate:85},{name:"Chamaecyparis spp.",rate:75},{name:"Cornus florida",rate:70},{name:"Ilex x attenuata",rate:75},{name:"Chionanthus virginicus",rate:75},{name:"Ginkgo biloba",rate:75},{name:"Koelreuteria paniculata",rate:45},{name:"Crataegus spp.",rate:60},{name:"Carya",rate:70},{name:"Glediitsia triacanthos",rate:40},{name:"Carpinus spp.",rate:85},{name:"Aesculus hippocastanum",rate:65},{name:"Pinus thunbergii",rate:55},{name:"Cryptomeria japonica",rate:65},{name:"Acer palmatum",rate:80},{name:"Cercidiphyllum japonicum",rate:65},{name:"Stewartia koreana",rate:70},{name:"Cornus kousa",rate:85},{name:"Quercus hemisphaerica",rate:80},{name:"Cupressus x leylandii",rate:45},{name:"Tilia spp.",rate:75},{name:"Quercus virginiana",rate:90},{name:"Pinus taeda",rate:50},{name:"Populus nigra 'Italica'",rate:25},{name:"Platanus x acerifolia",rate:70},{name:"Pinus palustris",rate:65},{name:"Albizia julibrissin",rate:35},{name:"Morus alba",rate:40},{name:"Catalpa speciosa",rate:50},{name:"Quercus rubra",rate:80},{name:"Acer platanoides",rate:30},{name:"Maclura pomifera",rate:55},{name:"Quercus lyrata",rate:80},{name:"Broussonetia papyrifera",rate:50},{name:"Acer griseum",rate:85},{name:"Asimina triloba",rate:70},{name:"Diospyros virginiana",rate:65},{name:"Quercus palustris",rate:65},{name:"Quercus stellata",rate:70},{name:"Populus tremuloides",rate:40},{name:"Acer rubrum",rate:55},{name:"Cercis canadensis",rate:75},{name:"Betula nigra",rate:80},{name:"Paulownia tomentosa",rate:35},{name:"Sassafras albidum",rate:60},{name:"Magnolia x soulangeana",rate:75},{name:"Quercus acutissima",rate:80},{name:"Amelanchier spp.",rate:85},{name:"Acer saccharinum",rate:45},{name:"Ulmus rubra",rate:65},{name:"Styrax spp.",rate:75},{name:"Magnolia grandiflora",rate:85},{name:"Quercus falcata",rate:60},{name:"Magnolia stellata",rate:75},{name:"Acer pensylvanicum",rate:55},{name:"Acer saccharum",rate:60},{name:"Rhus spp.",rate:55},{name:"Quercus bicolor",rate:95},{name:"Magnolia virginiana",rate:75},{name:"Liquidambar styraciflua",rate:70},{name:"Platanus occidentalis",rate:65},{name:"Ailanthus altissima",rate:25},{name:"Liriodendron tulipifera",rate:70},{name:"Sciadopitys verticullata",rate:85},{name:"Juglans nigra",rate:70},{name:"Quercus nigra",rate:65},{name:"Quercus alba",rate:95},{name:"Salix alba",rate:50},{name:"Quercus phellos",rate:90},{name:"Zelkova serrata",rate:70} ];
@@ -124,52 +125,4 @@
             if(!val) { res.style.display = 'none'; return; }
             const matches = speciesDB.filter(s => s.name.toLowerCase().includes(val)).slice(0, 10);
             if(matches.length){
-                res.style.display = 'block';
-                matches.forEach(m => {
-                    const d = document.createElement('div');
-                    d.className = 'search-item';
-                    d.innerText = m.name;
-                    d.onclick = () => { sIn.value = m.name; document.getElementById('sRate').value = m.rate; res.style.display = 'none'; calc(); };
-                    res.appendChild(d);
-                });
-            } else { res.style.display = 'none'; }
-        };
-
-        function calc() {
-            const dbh = parseFloat(document.getElementById('dbh').value) || 0;
-            const rate = document.getElementById('sRate').value / 100;
-            const c = document.getElementById('cond').value / 100;
-            const f = document.getElementById('func').value / 100;
-            const e = document.getElementById('ext').value / 100;
-
-            document.getElementById('cLab').innerText = Math.round(c*100)+'%';
-            document.getElementById('fLab').innerText = Math.round(f*100)+'%';
-            document.getElementById('eLab').innerText = Math.round(e*100)+'%';
-
-            // TRUNK FORMULA METHOD: (Base Cost + (Unit Cost * (Trunk Area - Replace Tree Area)))
-            // Replacement tree is 3.5" (Area = 9.62 sq in). Base Cost = $1824.
-            // Unit cost derived from campus data (~$189.60 per sq inch)
-            const ta = 0.7854 * (dbh**2);
-            const val = (1824 + (189.60 * Math.max(0, ta - 9.62))) * rate * c * f * e;
-            const formattedVal = '$' + val.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2});
-            
-            document.getElementById('valDisplay').innerText = formattedVal;
-            document.getElementById('pSpecies').innerText = sIn.value || "Not Selected";
-            document.getElementById('pDBH').innerText = dbh;
-            document.getElementById('pCond').innerText = Math.round(c*100)+'%';
-            document.getElementById('pFunc').innerText = Math.round(f*100)+'%';
-            document.getElementById('pExt').innerText = Math.round(e*100)+'%';
-            document.getElementById('pVal').innerText = formattedVal;
-        }
-
-        function prepareAndPrint() {
-            document.getElementById('pDate').innerText = new Date().toLocaleDateString();
-            document.getElementById('pNotes').innerText = document.getElementById('notesIn').value;
-            window.print();
-        }
-
-        window.onload = calc;
-        document.addEventListener('click', (e) => { if(!e.target.closest('.relative')) res.style.display = 'none'; });
-    </script>
-</body>
-</html>
+                res.style.display =
