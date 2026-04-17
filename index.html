@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NCSU Tree Appraisal Tool</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+        body { font-family: 'Inter', sans-serif; background: #000; color: #fff; }
+        .search-container { position: relative; }
+        #results { 
+            position: absolute; top: 100%; left: 0; right: 0; 
+            background: #18181b; border: 2px solid #CC0000; z-index: 9999; 
+            max-height: 250px; overflow-y: auto; display: none;
+            border-radius: 0 0 12px 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+        }
+        .search-item { padding: 12px; border-bottom: 1px solid #27272a; cursor: pointer; font-style: italic; }
+        .search-item:hover { background: #CC0000; color: white; }
+        .sticky-val { position: sticky; top: 0; z-index: 5000; background: #000; border-bottom: 4px solid #CC0000; padding: 1rem; }
+        input[type=range] { @apply w-full accent-[#CC0000] cursor-pointer mt-2; }
+        @media print { .no-print { display: none !important; } .print-only { display: block !important; } }
+        .print-only { display: none; }
+    </style>
+</head>
+<body class="min-h-screen pb-20">
+
+    <div class="sticky-val no-print">
+        <div class="max-w-4xl mx-auto flex justify-between items-end">
+            <div>
+                <p class="text-[10px] font-black text-[#CC0000] uppercase tracking-widest mb-1">Asset Value</p>
+                <h1 id="valDisplay" class="text-4xl md:text-6xl font-black leading-none">$0.00</h1>
+            </div>
+            <div class="text-[9px] font-bold text-zinc-600 border border-zinc-800 px-2 py-1 uppercase tracking-tighter">Wolfpack Appraisal v5.0</div>
+        </div>
+    </div>
+
+    <main class="max-w-4xl mx-auto p-4 grid grid-cols-1 lg:grid-cols-2 gap-10 no-print">
+        <section class="space-y-6">
+            <div class="bg-zinc-900 p-6 rounded-2xl border border-zinc-800 shadow-2xl">
+                <h2 class="text-xs font-black text-[#CC0000] uppercase mb-4 italic tracking-widest">1. Species Lookup</h2>
+                <div class="search-container">
+                    <input type="text" id="sSearch" autocomplete="off" placeholder="Search Latin Name..." 
+                           class="w-full bg-black border-2 border-zinc-700 p-4 rounded-xl italic focus:border-[#CC0000] outline-none text-white transition-all">
+                    <div id="results"></div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4 mt-6">
+                    <div class="bg-black p-4 rounded-xl border border-zinc-800 text-center">
+                        <span class="block text-[10px] text-zinc-500 font-bold uppercase mb-1">Rating %</span>
+                        <input type="number" id="sRate" value="90" oninput="calc()" class="w-full bg-transparent text-2xl font-black text-[#CC0000] outline-none text-center">
+                    </div>
+                    <div class="bg-black p-4 rounded-xl border border-zinc-800 text-center">
+                        <span class="block text-[10px] text-zinc-500 font-bold uppercase mb-1">DBH (In)</span>
+                        <input type="number" id="dbh" value="24" oninput="calc()" class="w-full bg-transparent text-2xl font-black text-white outline-none text-center">
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-zinc-900 p-6 rounded-2xl border border-zinc-800 space-y-6">
+                <h2 class="text-xs font-black text-[#CC0000] uppercase italic tracking-widest">2. Depreciation Factors</h2>
+                <div>
+                    <div class="flex justify-between text-[11px] font-bold uppercase">Condition <span id="cLab" class="text-[#CC0000]">85%</span></div>
+                    <input type="range" id="cond" min="1" max="100" value="85" oninput="calc()">
+                </div>
+                <div>
+                    <div class="flex justify-between text-[11px] font-bold uppercase">Functional <span id="fLab" class="text-[#CC0000]">100%</span></div>
+                    <input type="range" id="func" min="1" max="100" value="100" oninput="calc()">
+                </div>
+                <div>
+                    <div class="flex justify-between text-[11px] font-bold uppercase">Master Plan <span id="eLab" class="text-[#CC0000]">100%</span></div>
+                    <input type="range" id="ext" min="1" max="100" value="100" oninput="calc()">
+                </div>
+            </div>
+        </section>
+
+        <section class="space-y-4">
+            <div class="bg-zinc-900/50 p-6 border-l-4 border-zinc-700 rounded-r-xl">
+                <h4 class="text-white font-black text-lg uppercase mb-2">Campus Field Guide</h4>
+                <p class="text-[12px] text-zinc-400 leading-relaxed italic mb-4">ISA 10th Ed. Trunk Formula Method (TFM)</p>
+                <div class="space-y-3 text-[11px]">
+                    <div class="border-b border-zinc-800 pb-2"><strong>Condition:</strong> 100% = Peak vigor; <40% = Hazard status.</div>
+                    <div class="border-b border-zinc-800 pb-2"><strong>Functional:</strong> 100% = No utility/ADA conflict; <40% = Heaving hardscape.</div>
+                    <div><strong>Master Plan:</strong> 100% = Heritage status; <20% = Approved removal footprint.</div>
+                </div>
+            </div>
+            <button onclick="window.print()" class="w-full bg-white text-black font-black py-5 rounded-xl uppercase text-xs tracking-widest hover:bg-[#CC0000] hover:text-white transition-all shadow-2xl">
+                Export Appraisal Report
+            </button>
+        </section>
+    </main>
+
+    <script>
+        const speciesDB = [
+            {name:"Ulmus americana",rate:55},{name:"Ilex opaca",rate:70},{name:"Ostrya virginiana",rate:75},{name:"Cladrastis kentukea",rate:65},{name:"Malus spp.",rate:40},{name:"Thuja spp.",rate:50},{name:"Fraxinus pennsylvanica",rate:35},{name:"Taxodium distichum",rate:90},{name:"Fagus spp.",rate:80},{name:"Magnolia macrophylla",rate:75},{name:"Nyssa sylvatica",rate:75},{name:"Salix nigra",rate:40},{name:"Quercus marilandica",rate:70},{name:"Cedrus altantica 'Glauca'",rate:50},{name:"Pyrus calleryana",rate:20},{name:"Halesia carolina",rate:80},{name:"Prunus serotina",rate:75},{name:"Prunus spp.",rate:45},{name:"Quercus prinus",rate:80},{name:"Cunninghamia lanceolata",rate:65},{name:"Cedrus parvifolia",rate:80},{name:"Celtis occidentalis",rate:70},{name:"Cornus mas",rate:75},{name:"Malus spp.",rate:55},{name:"Lagerstroemia indica",rate:80},{name:"Magnolia acuminata",rate:60},{name:"Metasequoia glyptostroboides",rate:70},{name:"Cedrus deodara",rate:40},{name:"Populus deltoides",rate:40},{name:"Juniperus virginiana",rate:85},{name:"Chamaecyparis spp.",rate:75},{name:"Cornus florida",rate:70},{name:"Ilex x attenuata",rate:75},{name:"Chionanthus virginicus",rate:75},{name:"Ginkgo biloba",rate:75},{name:"Koelreuteria paniculata",rate:45},{name:"Crataegus spp.",rate:60},{name:"Carya",rate:70},{name:"Glediitsia triacanthos",rate:40},{name:"Carpinus spp.",rate:85},{name:"Aesculus hippocastanum",rate:65},{name:"Pinus thunbergii",rate:55},{name:"Cryptomeria japonica",rate:65},{name:"Acer palmatum",rate:80},{name:"Cercidiphyllum japonicum",rate:65},{name:"Stewartia koreana",rate:70},{name:"Cornus kousa",rate:85},{name:"Quercus hemisphaerica",rate:80},{name:"Cupressus x leylandii",rate:45},{name:"Tilia spp.",rate:75},{name:"Quercus virginiana",rate:90},{name:"Pinus taeda",rate:50},{name:"Populus nigra 'Italica'",rate:25},{name:"Platanus x acerifolia",rate:70},{name:"Pinus palustris",rate:65},{name:"Albizia julibrissin",rate:35},{name:"Morus alba",rate:40},{name:"Catalpa speciosa",rate:50},{name:"Quercus rubra",rate:80},{name:"Acer platanoides",rate:30},{name:"Maclura pomifera",rate:55},{name:"Quercus lyrata",rate:80},{name:"Broussonetia papyrifera",rate:50},{name:"Acer griseum",rate:85},{name:"Asimina triloba",rate:70},{name:"Diospyros virginiana",rate:65},{name:"Quercus palustris",rate:65},{name:"Quercus stellata",rate:70},{name:"Populus tremuloides",rate:40},{name:"Acer rubrum",rate:55},{name:"Cercis canadensis",rate:75},{name:"Betula nigra",rate:80},{name:"Paulownia tomentosa",rate:35},{name:"Sassafras albidum",rate:60},{name:"Magnolia x soulangeana",rate:75},{name:"Quercus acutissima",rate:80},{name:"Amelanchier spp.",rate:85},{name:"Acer saccharinum",rate:45},{name:"Ulmus rubra",rate:65},{name:"Styrax spp.",rate:75},{name:"Magnolia grandiflora",rate:85},{name:"Quercus falcata",rate:60},{name:"Magnolia stellata",rate:75},{name:"Acer pensylvanicum",rate:55},{name:"Acer saccharum",rate:60},{name:"Rhus spp.",rate:55},{name:"Quercus bicolor",rate:95},{name:"Magnolia virginiana",rate:75},{name:"Liquidambar styraciflua",rate:70},{name:"Platanus occidentalis",rate:65},{name:"Ailanthus altissima",rate:25},{name:"Liriodendron tulipifera",rate:70},{name:"Sciadopitys verticullata",rate:85},{name:"Juglans nigra",rate:70},{name:"Quercus nigra",rate:65},{name:"Quercus alba",rate:95},{name:"Salix alba",rate:50},{name:"Quercus phellos",rate:90},{name:"Zelkova serrata",rate:70}
+        ];
+
+        const sIn = document.getElementById('sSearch');
+        const res = document.getElementById('results');
+
+        sIn.oninput = () => {
+            const val = sIn.value.toLowerCase();
+            res.innerHTML = '';
+            if(!val) { res.style.display = 'none'; return; }
+            const matches = speciesDB.filter(s => s.name.toLowerCase().includes(val)).slice(0, 10);
+            if(matches.length){
+                res.style.display = 'block';
+                matches.forEach(m => {
+                    const d = document.createElement('div');
+                    d.className = 'search-item';
+                    d.innerText = m.name;
+                    d.onclick = () => {
+                        sIn.value = m.name;
+                        document.getElementById('sRate').value = m.rate;
+                        res.style.display = 'none';
+                        calc();
+                    };
+                    res.appendChild(d);
+                });
+            } else { res.style.display = 'none'; }
+        };
+
+        function calc() {
+            const dbh = parseFloat(document.getElementById('dbh').value) || 0;
+            const rate = document.getElementById('sRate').value / 100;
+            const c = document.getElementById('cond').value / 100;
+            const f = document.getElementById('func').value / 100;
+            const e = document.getElementById('ext').value / 100;
+
+            document.getElementById('cLab').innerText = Math.round(c*100)+'%';
+            document.getElementById('fLab').innerText = Math.round(f*100)+'%';
+            document.getElementById('eLab').innerText = Math.round(e*100)+'%';
+
+            const ta = 0.7854 * (dbh**2);
+            const val = (450 + (82 * Math.max(0, ta - 7.07))) * rate * c * f * e;
+            document.getElementById('valDisplay').innerText = '$' + val.toLocaleString(undefined, {minimumFractionDigits: 2});
+        }
+        window.onload = calc;
+        document.addEventListener('click', (e) => { if(!e.target.closest('.search-container')) res.style.display = 'none'; });
+    </script>
+</body>
+</html>
