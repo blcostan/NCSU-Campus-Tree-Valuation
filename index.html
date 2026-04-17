@@ -7,38 +7,32 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
-        body { font-family: 'Inter', sans-serif; background: #000; color: #fff; overflow-x: hidden; }
-        .sticky-val { position: sticky; top: 0; z-index: 5000; background: rgba(0,0,0,0.95); backdrop-filter: blur(10px); border-bottom: 4px solid #CC0000; padding: 1rem; }
-        #results { position: absolute; top: 100%; left: 0; right: 0; background: #18181b; border: 2px solid #CC0000; z-index: 9999; max-height: 200px; overflow-y: auto; display: none; border-radius: 0 0 12px 12px; }
+        body { font-family: 'Inter', sans-serif; background: #000; color: #fff; margin: 0; padding: 0; }
+        .sticky-val { position: sticky; top: 0; z-index: 9999; background: rgba(0,0,0,0.95); backdrop-filter: blur(10px); border-bottom: 4px solid #CC0000; padding: 1rem; }
+        #results { position: absolute; top: 100%; left: 0; right: 0; background: #18181b; border: 2px solid #CC0000; z-index: 10000; max-height: 200px; overflow-y: auto; display: none; border-radius: 0 0 12px 12px; }
         .search-item { padding: 14px; border-bottom: 1px solid #27272a; cursor: pointer; font-style: italic; font-size: 14px; }
         input[type=range] { @apply w-full accent-[#CC0000] h-3 bg-zinc-800 rounded-lg appearance-none cursor-pointer mt-4; }
-        
-        /* Fixed Matrix Layout */
         .matrix-row { @apply border-b border-zinc-800 py-4 last:border-0 flex items-start gap-4; }
         .matrix-pct { @apply text-[#CC0000] font-black text-xs w-20 flex-shrink-0 pt-0.5; }
         .matrix-desc { @apply text-[12px] text-zinc-400 leading-snug flex-grow; }
-        
-        .guide-card { @apply bg-zinc-900/50 p-6 border-t-2 border-zinc-700 rounded-xl mb-6 h-auto; }
-        .guide-title { @apply text-white font-bold text-sm mb-4 flex items-center uppercase tracking-wider; }
-        
         @media print { .no-print { display: none !important; } }
     </style>
 </head>
 <body class="min-h-screen">
 
     <div class="sticky-val no-print">
-        <div class="max-w-4xl mx-auto flex justify-between items-center">
+        <div class="max-w-2xl mx-auto flex justify-between items-center">
             <div>
                 <p class="text-[9px] font-black text-[#CC0000] uppercase tracking-tighter">Campus Asset Value</p>
                 <h1 id="valDisplay" class="text-3xl md:text-5xl font-black leading-none tracking-tight">$0.00</h1>
             </div>
-            <button onclick="window.print()" class="bg-white text-black text-[10px] font-black px-4 py-2 rounded uppercase shadow-lg">Export PDF</button>
+            <button onclick="window.print()" class="bg-white text-black text-[10px] font-black px-4 py-2 rounded uppercase shadow-lg">Export</button>
         </div>
     </div>
 
-    <main class="max-w-4xl mx-auto p-4 flex flex-col gap-8 no-print">
+    <main class="max-w-2xl mx-auto p-4 space-y-8 no-print">
         
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="space-y-6">
             <div class="bg-zinc-900 p-6 rounded-2xl border border-zinc-800 shadow-xl">
                 <h2 class="text-[#CC0000] font-black text-[10px] uppercase tracking-widest mb-4 italic">1. Identity & Size</h2>
                 <div class="relative">
@@ -59,7 +53,7 @@
             </div>
 
             <div class="bg-zinc-900 p-6 rounded-2xl border border-zinc-800 space-y-6">
-                <h2 class="text-[#CC0000] font-black text-[10px] uppercase tracking-widest italic">2. Depreciation Factors</h2>
+                <h2 class="text-[#CC0000] font-black text-[10px] uppercase tracking-widest italic">2. Depreciation</h2>
                 <div>
                     <div class="flex justify-between text-[11px] font-bold uppercase">Condition Rating <span id="cLab" class="text-[#CC0000]">85%</span></div>
                     <input type="range" id="cond" min="1" max="100" value="85" oninput="calc()">
@@ -75,7 +69,82 @@
             </div>
         </div>
 
-        <div class="space-y-4">
-            <h2 class="text-zinc-600 font-black text-[10px] uppercase tracking-[.3em] mb-4 ml-1 italic text-center">Field Assessment Standards</h2>
+        <div class="space-y-6">
+            <h2 class="text-zinc-600 font-black text-[10px] uppercase tracking-[.3em] text-center italic pt-4">Field Assessment Standards</h2>
             
-            <div class="guide-card">
+            <div class="bg-zinc-900/50 p-6 border-t-2 border-zinc-700 rounded-xl">
+                <h4 class="text-white font-bold text-sm mb-4 flex items-center uppercase tracking-wider"><span class="w-2 h-2 bg-[#CC0000] rounded-full mr-2"></span> Biological Condition</h4>
+                <div class="matrix-row"><span class="matrix-pct">90-100%</span><span class="matrix-desc">Peak vigor; perfect structure; zero dieback; strong apical dominance.</span></div>
+                <div class="matrix-row"><span class="matrix-pct">70-90%</span><span class="matrix-desc">Good vigor; minor structural defects; <10% deadwood in crown.</span></div>
+                <div class="matrix-row"><span class="matrix-pct">50-70%</span><span class="matrix-desc">Fair vigor; codominant stems with inclusions; 10-30% crown dieback.</span></div>
+                <div class="matrix-row"><span class="matrix-pct">< 50%</span><span class="matrix-desc">Declining; major decay/cavities; hazard potential; >30% dieback.</span></div>
+            </div>
+
+            <div class="bg-zinc-900/50 p-6 border-t-2 border-zinc-700 rounded-xl">
+                <h4 class="text-white font-bold text-sm mb-4 flex items-center uppercase tracking-wider"><span class="w-2 h-2 bg-zinc-500 rounded-full mr-2"></span> Functional Suitability</h4>
+                <div class="matrix-row"><span class="matrix-pct">90-100%</span><span class="matrix-desc">Ideal species for site; zero hardscape heave; no utility conflicts.</span></div>
+                <div class="matrix-row"><span class="matrix-pct">70-90%</span><span class="matrix-desc">Minor conflict with site use; requires routine utility pruning.</span></div>
+                <div class="matrix-row"><span class="matrix-pct">40-70%</span><span class="matrix-desc">Heaving hardscape > 1/4" (ADA conflict); steam line buffer issue.</span></div>
+                <div class="matrix-row"><span class="matrix-pct">< 40%</span><span class="matrix-desc">Severe obstruction to traffic/visibility or safety hazard to infrastructure.</span></div>
+            </div>
+
+            <div class="bg-zinc-900/50 p-6 border-t-2 border-zinc-700 rounded-xl">
+                <h4 class="text-white font-bold text-sm mb-4 flex items-center uppercase tracking-wider"><span class="w-2 h-2 bg-white rounded-full mr-2"></span> Master Plan (External)</h4>
+                <div class="matrix-row"><span class="matrix-pct">100%</span><span class="matrix-desc">NCSU Heritage or Memorial Registry; core landmark specimen.</span></div>
+                <div class="matrix-row"><span class="matrix-pct">75-90%</span><span class="matrix-desc">Permanent landscape feature per current master plan designation.</span></div>
+                <div class="matrix-row"><span class="matrix-pct">40-75%</span><span class="matrix-desc">In potential future build footprint; long-term viability questionable.</span></div>
+                <div class="matrix-row"><span class="matrix-pct">< 40%</span><span class="matrix-desc">Slated for removal per approved physical master plan project or zone.</span></div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const speciesDB = [
+            {name:"Ulmus americana",rate:55},{name:"Ilex opaca",rate:70},{name:"Ostrya virginiana",rate:75},{name:"Cladrastis kentukea",rate:65},{name:"Malus spp.",rate:40},{name:"Thuja spp.",rate:50},{name:"Fraxinus pennsylvanica",rate:35},{name:"Taxodium distichum",rate:90},{name:"Fagus spp.",rate:80},{name:"Magnolia macrophylla",rate:75},{name:"Nyssa sylvatica",rate:75},{name:"Salix nigra",rate:40},{name:"Quercus marilandica",rate:70},{name:"Cedrus altantica 'Glauca'",rate:50},{name:"Pyrus calleryana",rate:20},{name:"Halesia carolina",rate:80},{name:"Prunus serotina",rate:75},{name:"Prunus spp.",rate:45},{name:"Quercus prinus",rate:80},{name:"Cunninghamia lanceolata",rate:65},{name:"Cedrus parvifolia",rate:80},{name:"Celtis occidentalis",rate:70},{name:"Cornus mas",rate:75},{name:"Malus spp.",rate:55},{name:"Lagerstroemia indica",rate:80},{name:"Magnolia acuminata",rate:60},{name:"Metasequoia glyptostroboides",rate:70},{name:"Cedrus deodara",rate:40},{name:"Populus deltoides",rate:40},{name:"Juniperus virginiana",rate:85},{name:"Chamaecyparis spp.",rate:75},{name:"Cornus florida",rate:70},{name:"Ilex x attenuata",rate:75},{name:"Chionanthus virginicus",rate:75},{name:"Ginkgo biloba",rate:75},{name:"Koelreuteria paniculata",rate:45},{name:"Crataegus spp.",rate:60},{name:"Carya",rate:70},{name:"Glediitsia triacanthos",rate:40},{name:"Carpinus spp.",rate:85},{name:"Aesculus hippocastanum",rate:65},{name:"Pinus thunbergii",rate:55},{name:"Cryptomeria japonica",rate:65},{name:"Acer palmatum",rate:80},{name:"Cercidiphyllum japonicum",rate:65},{name:"Stewartia koreana",rate:70},{name:"Cornus kousa",rate:85},{name:"Quercus hemisphaerica",rate:80},{name:"Cupressus x leylandii",rate:45},{name:"Tilia spp.",rate:75},{name:"Quercus virginiana",rate:90},{name:"Pinus taeda",rate:50},{name:"Populus nigra 'Italica'",rate:25},{name:"Platanus x acerifolia",rate:70},{name:"Pinus palustris",rate:65},{name:"Albizia julibrissin",rate:35},{name:"Morus alba",rate:40},{name:"Catalpa speciosa",rate:50},{name:"Quercus rubra",rate:80},{name:"Acer platanoides",rate:30},{name:"Maclura pomifera",rate:55},{name:"Quercus lyrata",rate:80},{name:"Broussonetia papyrifera",rate:50},{name:"Acer griseum",rate:85},{name:"Asimina triloba",rate:70},{name:"Diospyros virginiana",rate:65},{name:"Quercus palustris",rate:65},{name:"Quercus stellata",rate:70},{name:"Populus tremuloides",rate:40},{name:"Acer rubrum",rate:55},{name:"Cercis canadensis",rate:75},{name:"Betula nigra",rate:80},{name:"Paulownia tomentosa",rate:35},{name:"Sassafras albidum",rate:60},{name:"Magnolia x soulangeana",rate:75},{name:"Quercus acutissima",rate:80},{name:"Amelanchier spp.",rate:85},{name:"Acer saccharinum",rate:45},{name:"Ulmus rubra",rate:65},{name:"Styrax spp.",rate:75},{name:"Magnolia grandiflora",rate:85},{name:"Quercus falcata",rate:60},{name:"Magnolia stellata",rate:75},{name:"Acer pensylvanicum",rate:55},{name:"Acer saccharum",rate:60},{name:"Rhus spp.",rate:55},{name:"Quercus bicolor",rate:95},{name:"Magnolia virginiana",rate:75},{name:"Liquidambar styraciflua",rate:70},{name:"Platanus occidentalis",rate:65},{name:"Ailanthus altissima",rate:25},{name:"Liriodendron tulipifera",rate:70},{name:"Sciadopitys verticullata",rate:85},{name:"Juglans nigra",rate:70},{name:"Quercus nigra",rate:65},{name:"Quercus alba",rate:95},{name:"Salix alba",rate:50},{name:"Quercus phellos",rate:90},{name:"Zelkova serrata",rate:70}
+        ];
+
+        const sIn = document.getElementById('sSearch');
+        const res = document.getElementById('results');
+
+        sIn.oninput = () => {
+            const val = sIn.value.toLowerCase();
+            res.innerHTML = '';
+            if(!val) { res.style.display = 'none'; return; }
+            const matches = speciesDB.filter(s => s.name.toLowerCase().includes(val)).slice(0, 10);
+            if(matches.length){
+                res.style.display = 'block';
+                matches.forEach(m => {
+                    const d = document.createElement('div');
+                    d.className = 'search-item';
+                    d.innerText = m.name;
+                    d.onclick = () => {
+                        sIn.value = m.name;
+                        document.getElementById('sRate').value = m.rate;
+                        res.style.display = 'none';
+                        calc();
+                    };
+                    res.appendChild(d);
+                });
+            } else { res.style.display = 'none'; }
+        };
+
+        function calc() {
+            const dbh = parseFloat(document.getElementById('dbh').value) || 0;
+            const rate = document.getElementById('sRate').value / 100;
+            const c = document.getElementById('cond').value / 100;
+            const f = document.getElementById('func').value / 100;
+            const e = document.getElementById('ext').value / 100;
+
+            document.getElementById('cLab').innerText = Math.round(c*100)+'%';
+            document.getElementById('fLab').innerText = Math.round(f*100)+'%';
+            document.getElementById('eLab').innerText = Math.round(e*100)+'%';
+
+            const ta = 0.7854 * (dbh**2);
+            const val = (450 + (82 * Math.max(0, ta - 7.07))) * rate * c * f * e;
+            document.getElementById('valDisplay').innerText = '$' + val.toLocaleString(undefined, {minimumFractionDigits: 2});
+        }
+        window.onload = calc;
+        document.addEventListener('click', (e) => { if(!e.target.closest('.relative')) res.style.display = 'none'; });
+    </script>
+</body>
+</html>
